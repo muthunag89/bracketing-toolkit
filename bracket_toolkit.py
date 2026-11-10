@@ -7,10 +7,10 @@ verify_geometry. ONE geometry engine produces records; the inline code blocks
 (to_ascii) and the interactive SVG (to_svg) are both serialisations of those
 same records, so the two can never disagree.
 
-ONE COMMAND per passage:
-    python3 bracket_toolkit.py <passage>.py              # full delivery
-    python3 bracket_toolkit.py <passage>.py --views      # draft: print views only
-    python3 bracket_toolkit.py <passage>.py --skeleton   # print unwritten NOTES stubs
+ONE COMMAND per passage (toolkit and passage module in separate folders):
+    python3 -I toolkit/bracket_toolkit.py work/<passage>.py              # full delivery
+    python3 -I toolkit/bracket_toolkit.py work/<passage>.py --views      # draft: views only
+    python3 -I toolkit/bracket_toolkit.py work/<passage>.py --skeleton   # unwritten NOTES stubs
 
 Full delivery: prints both inline views, writes <PASSAGE>_bracket_standard.html,
 <PASSAGE>_bracket_mainpoint.html and <PASSAGE>_interactive.html to OUT, and runs
@@ -951,6 +951,10 @@ def deliver(path, mode="full"):
 
 
 if __name__ == "__main__":
+    # Run as a script, this file is "__main__". Register it under its real name
+    # so a passage module in another folder can `from bracket_toolkit import ...`
+    # and get these same classes, even under `python3 -I` (no script dir on path).
+    sys.modules.setdefault("bracket_toolkit", sys.modules["__main__"])
     a = sys.argv[1:]
     if not a or a[0] in ("-h", "--help"):
         sys.exit(__doc__)
